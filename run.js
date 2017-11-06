@@ -38,6 +38,11 @@ casper.start(env.host, function() {
         this.echo('Ok I see the message I just sent.');
         const end = new Date();
         fs.write(env.logFile, (start - 0)+'-'+(end - 0)+"\n", 'a');
+
+        this.echo('Now, staying 5 seconds to read conversation');
+        this.wait(5000, function () {
+            this.echo('Well now leaving chat.');
+        });
     });
 });
 

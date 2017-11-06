@@ -12,6 +12,10 @@ foreach ($sources as $source) {
     $file = "wait-time.$source.log";
     $sourceData = [];
 
+    if (!file_exists($file)) {
+        continue;
+    }
+
     foreach (file($file) as $line) {
         $l = array_map('intval', explode('-', $line));
         $l []= $source;
