@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Sandstone chat</title>
+
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font: 13px Helvetica, Arial; }
+            form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+            form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+            form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+            #messages { list-style-type: none; margin: 0; padding: 0; }
+            #messages li { padding: 5px 10px; }
+            #messages li:nth-child(odd) { background: #eee; }
+            #messages { margin-bottom: 40px }
+        </style>
+    </head>
+    <body>
+        <ul id="messages">
+        </ul>
+
+        <form>
+            <input id="m" autocomplete="off"><button>Send</button>
+        </form>
+
+        <script src="autobahn.min.js"></script>
+        <script src="jquery-1.11.1.min.js"></script>
+        <script>
+
+            // Connect to chat server
+            ab.connect(
+                'ws://localhost:25569',
+                function (session) {
+
+                    // Subscribe to 'chat/general' topic
+                    session.subscribe('chat/general', function (topic, event) {
+                        $('#messages').append($('<li>').text(event.message));
+                        window.scrollTo(0, document.body.scrollHeight);
+                    });
+
+                    // Publish message on send button click
+                    listenSendButton(session);
+                },
+                console.warn
+            );
+
+            function listenSendButton(session) {
+                document.querySelector('button').addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    session.publish('chat/general', $('#m').val());
+                    $('#m').val('');
+
+                    return false;
+                });
+            }
+        </script>
+    </body>
+</html>
